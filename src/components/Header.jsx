@@ -2,6 +2,7 @@ import moment from "moment";
 import logo from "../assets/logo.png";
 
 const Header = () => {
+  // console.log(import.meta.env.VITE_a)
   return (
   
       <div className="flex flex-col gap-3 py-3 items-center justify-center ">

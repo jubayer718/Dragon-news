@@ -1,18 +1,23 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../Provider/AuthProvider";
 
 
 
 
 const Register = () => {
-  const {createNewUser, setUser}=useContext(AuthContext)
-
+  const { createNewUser, setUser,updateUser } = useContext(AuthContext)
+  const [error,setError]=useState({})
+const navigate=useNavigate()
   const handleSubmit = (e) => {
     e.preventDefault();
     const form = new FormData(e.target)
-    const name=form.get("name")
+    const name = form.get("name")
+    if (name.length < 5) {
+      setError({ ...error, name: "name must be 5 character" })
+      return;
+    }
     const email=form.get("email")
     const password=form.get("password")
     const photo=form.get("photo")
@@ -20,6 +25,12 @@ const Register = () => {
       .then(result => {
         const user = result.user
         setUser(user)
+        updateUser({ displayName: name, photoURL: photo })
+          .then((result) => {
+          navigate("/")
+          }).catch(error => {
+          console.log(error)
+        })
        
     }) .catch((error) => {
     const errorCode = error.code;
@@ -40,7 +51,12 @@ const Register = () => {
           <label className="label">
             <span className="label-text">Your Name</span>
           </label>
-          <input type="text" name="name" placeholder="Your Name" className="border-none rounded-none bg-gray-100  input input-bordered" required />
+              <input type="text" name="name" placeholder="Your Name" className="border-none rounded-none bg-gray-100  input input-bordered" required />
+              {
+                error.name&&  <label className="label text-xs text-red-600">
+          {error.name}
+          </label>
+              }
         </div>
         <div className="form-control">
           <label className="label">
